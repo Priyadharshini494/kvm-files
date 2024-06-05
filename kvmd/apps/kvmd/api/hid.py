@@ -19,7 +19,7 @@
 #                                                                            #
 # ========================================================================== #
 
-
+import re
 import os
 import stat
 import functools
@@ -299,28 +299,28 @@ class HidApi:
         self.__hid.set_connected(valid_bool(request.query.get("connected")))
         return make_json_response()
 
-    @exposed_http("GET", "/postcode/get_data")
-    async def __getData_handler(self, request: Request) -> Response:
-        ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=1)
-        iteration_count = 0  
+    # @exposed_http("GET", "/postcode/get_data")
+    # async def __getData_handler(self, request: Request) -> Response:
+    #     ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=1)
+    #     iteration_count = 0  
  
-        try:
-            while True:
-                line = await asyncio.to_thread(ser.readline)
-                if line:
-                    line = line.decode('utf-8', errors='replace').strip()
-                    result = {"data": line}
-                    return make_json_response(result)
-                iteration_count += 1
-                if iteration_count >= 50:
-                    break
+    #     try:
+    #         while True:
+    #             line = await asyncio.to_thread(ser.readline)
+    #             if line:
+    #                 line = line.decode('utf-8', errors='replace').strip()
+    #                 result = {"data": line}
+    #                 return make_json_response(result)
+    #             iteration_count += 1
+    #             if iteration_count >= 50:
+    #                 break
  
-        except asyncio.TimeoutError:
-            pass
-        finally:
-            ser.close()
+    #     except asyncio.TimeoutError:
+    #         pass
+    #     finally:
+    #         ser.close()
  
-        iteration_count = 0
+    #     iteration_count = 0
 
     @exposed_http("POST", "/hid/reset")
     async def __reset_handler(self, _: Request) -> Response:
@@ -526,6 +526,53 @@ class HidApi:
     @exposed_http("POST", "/hid/events/send_mouse_wheel")
     async def __events_send_mouse_wheel_handler(self, request: Request) -> Response:
         return self.__process_http_delta_event(request, self.__hid.send_mouse_wheel_event)
+    
+    @exposed_http("GET", "/postcode/get_data")
+    async def __getData_handler(self, request: Request) -> Response:
+        values = request.query.get('lastline')
+        with open('/home/kvmd-webterm/minicom_output_edited.txt', 'r') as file:
+            line_number = 1
+            api_line_number = int(values) if values and self.is_integer(values) else 1
+            pattern = re.compile(r"--- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ---")
+            last_match = None
+            match_line = 1
+            hex_data = []
+            for line in file:
+                if line_number > api_line_number:
+                    match = pattern.search(line.strip())
+        
+                    # If a match is found, update last_match
+                    if match:
+                        last_match = match
+                        match_line = line_number
+                        hex_data = []
+                    else:
+                        print(f"Line {line_number}: {line.strip()}")
+                        hex_data.append(f"{line.strip()[-2:]}")
+        
+                # Increment line number
+                line_number += 1
+            
+                # If a match was found, print the last occurrence
+        if last_match:
+                #print("Last occurrence found on " + str(match_line) + " : ", last_match.group(1))
+                #print(line_number, hex_data)
+            return make_json_response({"Linenumber":line_number,"hexdata":hex_data})
+        else:
+                #print("Pattern not found in the file.")
+                #print(line_number, hex_data)
+            return make_json_response({"Linenumber":line_number,"hexdata":hex_data})
+    
+    @exposed_http("GET", "/postcode/get_logs")
+    async def __getlog_handler(self, request: Request) -> Response:
+        api_response = []
+        with open('/home/kvmd-webterm/minicom_output_edited.txt', 'r') as file:
+            for line in file:
+                if not line.startswith('---'):
+                     value = re.sub(r'^\d+\) |[\r]', '', line)
+                     api_response.append(value.strip())
+        
+        return make_json_response({"Logs":api_response})   
 
     def __process_http_delta_event(self, request: Request, handler: Callable[[int, int], None]) -> Response:
         delta_x = valid_hid_mouse_delta(request.query.get("delta_x"))
