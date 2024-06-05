@@ -108,6 +108,14 @@ class HidApi:
         self.execute_i2cset(0x24, 0x00, 0x3f)
         self.execute_i2cset(0x24, 0x0c, 0xff)
         input_status_hex = self.execute_i2cget(0x24, 0x12)
+        if not input_status_hex:
+            error_message = "Empty input status retrieved from I2C device"
+            print(error_message)
+            return make_json_response({
+                'error': error_message,
+                'input_status_binary': '00000000',
+                'input_status_hexadecimal': '00'
+            })
         input_status_bin = bin(int(input_status_hex, 16))[2:].zfill(8)
         self.execute_i2cset(0x24, 0x12, 0x00)
         return make_json_response({
