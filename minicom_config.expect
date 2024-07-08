@@ -1,0 +1,31 @@
+#!/usr/bin/expect
+
+set timeout 10
+
+# Start minicom with the setup flag
+spawn minicom -s
+
+expect "Configuration"
+send -- "Serial port setup\r"
+
+expect "Change which setting"
+send -- "A\r"
+
+# Change this to your desired serial device, e.g., /dev/ttyUSB0
+expect "Enter device name"
+send -- "/dev/ttyUSB0\r"
+
+send -- "\r"
+
+expect "Change which setting"
+send -- "E\r"
+
+send -- "\r"
+
+expect "Configuration"
+send -- "Save setup as dfl\r"
+
+expect "Configuration"
+send -- "Exit\r"
+
+expect eof
