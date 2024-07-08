@@ -13,7 +13,7 @@ send -- "A\r"
 
 # Change this to your desired serial device, e.g., /dev/ttyUSB0
 expect "Enter device name"
-send -- "/dev/ttyUSB0\r"
+send -- "/dev/ttyAMA0\r"
 
 send -- "\r"
 
