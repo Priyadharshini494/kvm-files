@@ -5,10 +5,10 @@ set timeout 10
 # Start minicom with the setup flag
 spawn minicom -s
 
-expect "Configuration"
+expect "+-----\[configuration]------+"
 send -- "Serial port setup\r"
 
-expect "Change which setting"
+expect "Change which setting?"
 send -- "A\r"
 
 # Change this to your desired serial device, e.g., /dev/ttyUSB0
