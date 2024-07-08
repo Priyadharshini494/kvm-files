@@ -5,7 +5,8 @@ set timeout 10
 # Start minicom with the setup flag
 spawn minicom -s
 
-expect "+-----\[configuration]------+"
+#expect "+-----\[configuration]------+"
+expect "Filenames and paths"
 send -- "Serial port setup\r"
 
 expect "Change which setting?"
