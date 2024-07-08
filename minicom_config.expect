@@ -13,7 +13,12 @@ send -- "A\r"
 
 # Change this to your desired serial device, e.g., /dev/ttyUSB0
 expect "Enter device name"
-send -- "/dev/ttyAMA0\r"
+
+# Send backspaces to clear existing device name
+send -- "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"  ;# Adjust the number of \b as needed to clear the field completely
+
+# Send the new serial device name
+send -- "/dev/ttyAMA0\r"  ;# Replace with your desired serial device
 
 send -- "\r"
 
