@@ -1429,7 +1429,7 @@ if [[ ! -e /usr/bin/kvmd || "$1" == "-f" ]]; then
   printf "\n\nReboot is required to create kvmd users and groups.\nPlease re-run this script after reboot to complete the install.\n"
 
   # Ask user to press CTRL+C before reboot or ENTER to proceed with reboot
-  press-enter
+  #press-enter
   reboot
 
 else
