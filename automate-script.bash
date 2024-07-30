@@ -813,7 +813,7 @@ custom-startupfile() {
   echo " custom-startup service file uploaded"
 }
 
-upload-i2c-file(){
+upload-i2c-file-(){
   cd /home/rpi/Documents/
   temp_dir=$(mktemp -d)
   git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
@@ -832,6 +832,28 @@ upload-i2c-file(){
   rm -rf "$temp_dir"
   
   echo " i2c python file uploaded"
+}
+
+upload-acm-ncm-file(){
+  cd /home/rpi/Documents/
+  temp_dir=$(mktemp -d)
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
+
+  # Check if the clone was successful
+  if [ $? -ne 0 ]; then
+    echo "Failed to clone repository"
+    exit 1
+  fi
+
+  # Copy the file from the cloned repository to the target directory
+  cp "$temp_dir/enable_acm.sh" .
+  cp "$temp_dir/enable_ncm.sh" .
+  
+
+  # Clean up the temporary directory
+  rm -rf "$temp_dir"
+  
+  echo " acm ncm file uploaded"
 }
 
 
@@ -1520,6 +1542,7 @@ if [[ ! -e /usr/bin/kvmd || "$1" == "-f" ]]; then
   install-postman | tee -a $LOGFILE
   install-redfish | tee -a $LOGFILE
   upload-i2c-file | tee -a $LOGFILE
+  upload-acm-ncm-file | tee -a $LOGFILE
   install-pico | tee -a $LOGFILE
   otg-devices | tee -a $LOGFILE
   atx-startupfile | tee -a $LOGFILE
