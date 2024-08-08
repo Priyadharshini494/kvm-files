@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import dataclasses
 
 
@@ -11,8 +33,8 @@ class IpmiPasswdError(Exception):
 class IpmiUserCredentials:
     ipmi_user: str
     ipmi_passwd: str
-    rutomatrix_user: str
-    rutomatrix_passwd: str
+    kvmd_user: str
+    kvmd_passwd: str
 
 
 class IpmiAuthManager:
@@ -49,10 +71,10 @@ class IpmiAuthManager:
             if len(ipmi_user) == 0:
                 raise IpmiPasswdError(self.__path, lineno, "Empty IPMI user (left)")
 
-            (rutomatrix_user, rutomatrix_passwd) = right.split(":")
-            rutomatrix_user = rutomatrix_user.strip()
-            if len(rutomatrix_user) == 0:
-                raise IpmiPasswdError(self.__path, lineno, "Empty Rutomatrix user (left)")
+            (kvmd_user, kvmd_passwd) = right.split(":")
+            kvmd_user = kvmd_user.strip()
+            if len(kvmd_user) == 0:
+                raise IpmiPasswdError(self.__path, lineno, "Empty KVMD user (left)")
 
             if ipmi_user in credentials:
                 raise IpmiPasswdError(self.__path, lineno, f"Found duplicating user {ipmi_user!r} (left)")
@@ -60,7 +82,7 @@ class IpmiAuthManager:
             credentials[ipmi_user] = IpmiUserCredentials(
                 ipmi_user=ipmi_user,
                 ipmi_passwd=ipmi_passwd,
-                rutomatrix_user=rutomatrix_user,
-                rutomatrix_passwd=rutomatrix_passwd,
+                kvmd_user=kvmd_user,
+                kvmd_passwd=kvmd_passwd,
             )
         return credentials

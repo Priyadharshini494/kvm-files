@@ -86,11 +86,11 @@ from ..validators.hid import valid_hid_key
 from ..validators.hid import valid_hid_mouse_output
 from ..validators.hid import valid_hid_mouse_move
 
-from ..validators.ruto import valid_stream_quality
-from ..validators.ruto import valid_stream_fps
-from ..validators.ruto import valid_stream_resolution
-from ..validators.ruto import valid_stream_h264_bitrate
-from ..validators.ruto import valid_stream_h264_gop
+from ..validators.kvm import valid_stream_quality
+from ..validators.kvm import valid_stream_fps
+from ..validators.kvm import valid_stream_resolution
+from ..validators.kvm import valid_stream_h264_bitrate
+from ..validators.kvm import valid_stream_h264_gop
 
 from ..validators.ugpio import valid_ugpio_driver
 from ..validators.ugpio import valid_ugpio_channel

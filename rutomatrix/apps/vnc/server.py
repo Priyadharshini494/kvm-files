@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2020  Maxim Devaev <mdevaev@gmail.com>                    #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import os
 import asyncio
 import socket
@@ -14,9 +36,9 @@ from ...keyboard.mappings import WebModifiers
 from ...keyboard.mappings import X11Modifiers
 from ...keyboard.mappings import AT1_TO_WEB
 
-from ...clients.rutomatrix import RutomatrixClientWs
-from ...clients.rutomatrix import RutomatrixClientSession
-from ...clients.rutomatrix import RutomatrixClient
+from ...clients.kvmd import KvmdClientWs
+from ...clients.kvmd import KvmdClientSession
+from ...clients.kvmd import KvmdClient
 
 from ...clients.streamer import StreamerError
 from ...clients.streamer import StreamerPermError
@@ -30,7 +52,7 @@ from .rfb import RfbClient
 from .rfb.stream import rfb_format_remote
 from .rfb.errors import RfbError
 
-from .vncauth import VncAuthRutomatrixCredentials
+from .vncauth import VncAuthKvmdCredentials
 from .vncauth import VncAuthManager
 
 from .render import make_text_jpeg
@@ -41,7 +63,7 @@ from .render import make_text_jpeg
 class _SharedParams:
     width: int = dataclasses.field(default=800)
     height: int = dataclasses.field(default=600)
-    name: str = dataclasses.field(default="RUTOMATRIX")
+    name: str = dataclasses.field(default="PiKVM")
 
 
 class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
@@ -59,10 +81,10 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
         keymap_name: str,
         symmap: dict[int, dict[int, str]],
 
-        rutomatrix: RutomatrixClient,
+        kvmd: KvmdClient,
         streamers: list[BaseStreamerClient],
 
-        vnc_credentials: dict[str, VncAuthRutomatrixCredentials],
+        vnc_credentials: dict[str, VncAuthKvmdCredentials],
         vencrypt: bool,
         none_auth_only: bool,
         shared_params: _SharedParams,
@@ -88,7 +110,7 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
         self.__keymap_name = keymap_name
         self.__symmap = symmap
 
-        self.__rutomatrix = rutomatrix
+        self.__kvmd = kvmd
         self.__streamers = streamers
 
         self.__shared_params = shared_params
@@ -97,14 +119,14 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
         self.__stage2_encodings_accepted = aiotools.AioStage()
         self.__stage3_ws_connected = aiotools.AioStage()
 
-        self.__rutomatrix_session: (RutomatrixClientSession | None) = None
-        self.__rutomatrix_ws: (RutomatrixClientWs | None) = None
+        self.__kvmd_session: (KvmdClientSession | None) = None
+        self.__kvmd_ws: (KvmdClientWs | None) = None
 
         self.__fb_queue: "asyncio.Queue[dict]" = asyncio.Queue()
         self.__fb_has_key = False
 
         # Эти состояния шарить не обязательно - бекенд исключает дублирующиеся события.
-        # Все это нужно только чтобы не посылать лишние жсоны в сокет rutomatrix
+        # Все это нужно только чтобы не посылать лишние жсоны в сокет KVMD
         self.__mouse_buttons: dict[str, (bool | None)] = dict.fromkeys(["left", "right", "middle"], None)
         self.__mouse_move = {"x": -1, "y": -1}
 
@@ -115,7 +137,7 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
     async def run(self) -> None:
         try:
             await self._run(
-                rutomatrix=self.__rutomatrix_task_loop(),
+                kvmd=self.__kvmd_task_loop(),
                 streamer=self.__streamer_task_loop(),
                 fb_sender=self.__fb_sender_task_loop(),
             )
@@ -123,33 +145,33 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
             await aiotools.shield_fg(self.__cleanup())
 
     async def __cleanup(self) -> None:
-        if self.__rutomatrix_session:
-            await self.__rutomatrix_session.close()
-            self.__rutomatrix_session = None
+        if self.__kvmd_session:
+            await self.__kvmd_session.close()
+            self.__kvmd_session = None
 
     # =====
 
-    async def __rutomatrix_task_loop(self) -> None:
+    async def __kvmd_task_loop(self) -> None:
         logger = get_logger(0)
         await self.__stage1_authorized.wait_passed()
 
-        logger.info("%s [rutomatrix]: Waiting for the SetEncodings message ...", self._remote)
+        logger.info("%s [kvmd]: Waiting for the SetEncodings message ...", self._remote)
         if not (await self.__stage2_encodings_accepted.wait_passed(timeout=5)):
             raise RfbError("No SetEncodings message recieved from the client in 5 secs")
 
-        assert self.__rutomatrix_session
+        assert self.__kvmd_session
         try:
-            logger.info("%s [rutomatrix]: Applying HID params: mouse_output=%s ...", self._remote, self.__mouse_output)
-            await self.__rutomatrix_session.hid.set_params(mouse_output=self.__mouse_output)
+            logger.info("%s [kvmd]: Applying HID params: mouse_output=%s ...", self._remote, self.__mouse_output)
+            await self.__kvmd_session.hid.set_params(mouse_output=self.__mouse_output)
 
-            async with self.__rutomatrix_session.ws() as self.__rutomatrix_ws:
-                logger.info("%s [rutomatrix]: Connected to Rutomatrix websocket", self._remote)
+            async with self.__kvmd_session.ws() as self.__kvmd_ws:
+                logger.info("%s [kvmd]: Connected to KVMD websocket", self._remote)
                 self.__stage3_ws_connected.set_passed()
-                async for (event_type, event) in self.__rutomatrix_ws.communicate():
+                async for (event_type, event) in self.__kvmd_ws.communicate():
                     await self.__process_ws_event(event_type, event)
-                raise RfbError("Rutomatrix closed the websocket (the server may have been stopped)")
+                raise RfbError("KVMD closed the websocket (the server may have been stopped)")
         finally:
-            self.__rutomatrix_ws = None
+            self.__kvmd_ws = None
 
     async def __process_ws_event(self, event_type: str, event: dict) -> None:
         if event_type == "info_meta_state":
@@ -159,7 +181,7 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
                 host = None
             else:
                 if isinstance(host, str):
-                    name = f"RUTOMATRIX: {host}"
+                    name = f"PiKVM: {host}"
                     if self._encodings.has_rename:
                         await self._send_rename(name)
                     self.__shared_params.name = name
@@ -287,8 +309,8 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
     # =====
 
     async def _authorize_userpass(self, user: str, passwd: str) -> bool:
-        self.__rutomatrix_session = self.__rutomatrix.make_session(user, passwd)
-        if (await self.__rutomatrix_session.auth.check()):
+        self.__kvmd_session = self.__kvmd.make_session(user, passwd)
+        if (await self.__kvmd_session.auth.check()):
             self.__stage1_authorized.set_passed()
             return True
         return False
@@ -318,24 +340,24 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
                     web_key = variants.get(0)
 
                 if web_key is None and self.__modifiers == 0 and SymmapModifiers.SHIFT in variants:
-
-
+                    # JUMP doesn't send shift events:
+                    #   - https://github.com/pikvm/pikvm/issues/820
                     web_key = variants[SymmapModifiers.SHIFT]
                     fake_shift = True
 
-            if web_key and self.__rutomatrix_ws:
+            if web_key and self.__kvmd_ws:
                 if fake_shift:
-                    await self.__rutomatrix_ws.send_key_event(WebModifiers.SHIFT_LEFT, True)
-                await self.__rutomatrix_ws.send_key_event(web_key, state)
+                    await self.__kvmd_ws.send_key_event(WebModifiers.SHIFT_LEFT, True)
+                await self.__kvmd_ws.send_key_event(web_key, state)
                 if fake_shift:
-                    await self.__rutomatrix_ws.send_key_event(WebModifiers.SHIFT_LEFT, False)
+                    await self.__kvmd_ws.send_key_event(WebModifiers.SHIFT_LEFT, False)
 
     async def _on_ext_key_event(self, code: int, state: bool) -> None:
         web_key = AT1_TO_WEB.get(code)
         if web_key:
             self.__switch_modifiers(web_key, state)  # Предполагаем, что модификаторы всегда известны
-            if self.__rutomatrix_ws:
-                await self.__rutomatrix_ws.send_key_event(web_key, state)
+            if self.__kvmd_ws:
+                await self.__kvmd_ws.send_key_event(web_key, state)
 
     def __switch_modifiers(self, key: (int | str), state: bool) -> bool:
         mod = 0
@@ -354,42 +376,42 @@ class _Client(RfbClient):  # pylint: disable=too-many-instance-attributes
         return True
 
     async def _on_pointer_event(self, buttons: dict[str, bool], wheel: dict[str, int], move: dict[str, int]) -> None:
-        if self.__rutomatrix_ws:
+        if self.__kvmd_ws:
             if wheel["x"] or wheel["y"]:
-                await self.__rutomatrix_ws.send_mouse_wheel_event(wheel["x"], wheel["y"])
+                await self.__kvmd_ws.send_mouse_wheel_event(wheel["x"], wheel["y"])
 
             if self.__mouse_move != move:
-                await self.__rutomatrix_ws.send_mouse_move_event(move["x"], move["y"])
+                await self.__kvmd_ws.send_mouse_move_event(move["x"], move["y"])
                 self.__mouse_move = move
 
             for (button, state) in buttons.items():
                 if self.__mouse_buttons[button] != state:
-                    await self.__rutomatrix_ws.send_mouse_button_event(button, state)
+                    await self.__kvmd_ws.send_mouse_button_event(button, state)
                     self.__mouse_buttons[button] = state
 
     async def _on_cut_event(self, text: str) -> None:
         assert self.__stage1_authorized.is_passed()
-        assert self.__rutomatrix_session
+        assert self.__kvmd_session
         logger = get_logger(0)
         logger.info("%s [main]: Printing %d characters ...", self._remote, len(text))
         try:
-            (keymap_name, available) = await self.__rutomatrix_session.hid.get_keymaps()
+            (keymap_name, available) = await self.__kvmd_session.hid.get_keymaps()
             if self.__keymap_name in available:
                 keymap_name = self.__keymap_name
-            await self.__rutomatrix_session.hid.print(text, 0, keymap_name)
+            await self.__kvmd_session.hid.print(text, 0, keymap_name)
         except Exception:
             logger.exception("%s [main]: Can't print characters", self._remote)
 
     async def _on_set_encodings(self) -> None:
         assert self.__stage1_authorized.is_passed()
-        assert self.__rutomatrix_session
+        assert self.__kvmd_session
         self.__stage2_encodings_accepted.set_passed(multi=True)
 
-        has_quality = (await self.__rutomatrix_session.streamer.get_state())["features"]["quality"]
+        has_quality = (await self.__kvmd_session.streamer.get_state())["features"]["quality"]
         quality = (self._encodings.tight_jpeg_quality if has_quality else None)
         get_logger(0).info("%s [main]: Applying streamer params: jpeg_quality=%s; desired_fps=%d ...",
                            self._remote, quality, self.__desired_fps)
-        await self.__rutomatrix_session.streamer.set_params(quality, self.__desired_fps)
+        await self.__kvmd_session.streamer.set_params(quality, self.__desired_fps)
 
 
 # =====
@@ -417,7 +439,7 @@ class VncServer:  # pylint: disable=too-many-instance-attributes
         mouse_output: str,
         keymap_path: str,
 
-        rutomatrix: RutomatrixClient,
+        kvmd: KvmdClient,
         streamers: list[BaseStreamerClient],
         vnc_auth_manager: VncAuthManager,
     ) -> None:
@@ -456,10 +478,10 @@ class VncServer:  # pylint: disable=too-many-instance-attributes
                     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_USER_TIMEOUT, timeout)  # type: ignore
 
                 try:
-                    async with rutomatrix.make_session("", "") as rutomatrix_session:
-                        none_auth_only = await rutomatrix_session.auth.check()
+                    async with kvmd.make_session("", "") as kvmd_session:
+                        none_auth_only = await kvmd_session.auth.check()
                 except (aiohttp.ClientError, asyncio.TimeoutError) as err:
-                    logger.error("%s [entry]: Can't check Rutomatrix auth mode: %s", remote, tools.efmt(err))
+                    logger.error("%s [entry]: Can't check KVMD auth mode: %s", remote, tools.efmt(err))
                     return
 
                 await _Client(
@@ -473,7 +495,7 @@ class VncServer:  # pylint: disable=too-many-instance-attributes
                     mouse_output=mouse_output,
                     keymap_name=keymap_name,
                     symmap=symmap,
-                    rutomatrix=rutomatrix,
+                    kvmd=kvmd,
                     streamers=streamers,
                     vnc_credentials=(await self.__vnc_auth_manager.read_credentials())[0],
                     none_auth_only=none_auth_only,

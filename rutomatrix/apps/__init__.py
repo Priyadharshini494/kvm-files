@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import sys
 import os
 import functools
@@ -64,11 +86,11 @@ from ..validators.hid import valid_hid_key
 from ..validators.hid import valid_hid_mouse_output
 from ..validators.hid import valid_hid_mouse_move
 
-from ..validators.ruto import valid_stream_quality
-from ..validators.ruto import valid_stream_fps
-from ..validators.ruto import valid_stream_resolution
-from ..validators.ruto import valid_stream_h264_bitrate
-from ..validators.ruto import valid_stream_h264_gop
+from ..validators.kvm import valid_stream_quality
+from ..validators.kvm import valid_stream_fps
+from ..validators.kvm import valid_stream_resolution
+from ..validators.kvm import valid_stream_h264_bitrate
+from ..validators.kvm import valid_stream_h264_gop
 
 from ..validators.ugpio import valid_ugpio_driver
 from ..validators.ugpio import valid_ugpio_channel
@@ -325,7 +347,7 @@ def _get_config_scheme() -> dict:
     return {
         "logging": Option({}),
 
-        "rutomatrix": {
+        "kvmd": {
             "server": {
                 "unix":              Option("/run/kvmd/kvmd.sock", type=valid_abs_path, unpack_as="unix_path"),
                 "unix_rm":           Option(True,  type=valid_bool),
@@ -356,7 +378,7 @@ def _get_config_scheme() -> dict:
                 },
             },
 
-            "info": {  # Accessed via global config, see rutomatrix/info for details
+            "info": {  # Accessed via global config, see kvmd/info for details
                 "meta":   Option("/etc/kvmd/meta.yaml",    type=valid_abs_file),
                 "extras": Option("/usr/share/kvmd/extras", type=valid_abs_dir),
                 "hw": {
@@ -365,7 +387,7 @@ def _get_config_scheme() -> dict:
                     "state_poll":    Option(10.0,  type=valid_float_f01),
                 },
                 "fan": {
-                    "daemon":     Option("rutomatrix-fan", type=valid_stripped_string),
+                    "daemon":     Option("kvmd-fan", type=valid_stripped_string),
                     "unix":       Option("",  type=valid_abs_path, if_empty="", unpack_as="unix_path"),
                     "timeout":    Option(5.0, type=valid_float_f01),
                     "state_poll": Option(5.0, type=valid_float_f01),
@@ -677,7 +699,7 @@ def _get_config_scheme() -> dict:
         "otg": {
             "vendor_id":      Option(0x1D6B, type=valid_otg_id),  # Linux Foundation
             "product_id":     Option(0x0104, type=valid_otg_id),  # Multifunction Composite Gadget
-            "manufacturer":   Option("RUTOMATRIX", type=valid_stripped_string),
+            "manufacturer":   Option("PiKVM", type=valid_stripped_string),
             "product":        Option("Composite KVM Device", type=valid_stripped_string),
             "serial":         Option("CAFEBABE", type=valid_stripped_string, if_none=None),
             "device_version": Option(-1,     type=functools.partial(valid_number, min=-1, max=0xFFFF)),
@@ -686,7 +708,7 @@ def _get_config_scheme() -> dict:
             "remote_wakeup":  Option(False,  type=valid_bool),
 
             "gadget":     Option("kvmd", type=valid_otg_gadget),
-            "config":     Option("RUTOMATRIX device", type=valid_stripped_string_not_empty),
+            "config":     Option("PiKVM device", type=valid_stripped_string_not_empty),
             "udc":        Option("",     type=valid_stripped_string),
             "init_delay": Option(3.0,    type=valid_float_f01),
 
@@ -800,7 +822,7 @@ def _get_config_scheme() -> dict:
                 "timeout": Option(10.0, type=valid_float_f01),
             },
 
-            "rutomatrix": {
+            "kvmd": {
                 "unix":    Option("/run/kvmd/kvmd.sock", type=valid_abs_path, unpack_as="unix_path"),
                 "timeout": Option(5.0, type=valid_float_f01),
             },
@@ -845,7 +867,7 @@ def _get_config_scheme() -> dict:
                 },
             },
 
-            "rutomatrix": {
+            "kvmd": {
                 "unix":    Option("/run/kvmd/kvmd.sock", type=valid_abs_path, unpack_as="unix_path"),
                 "timeout": Option(5.0, type=valid_float_f01),
             },

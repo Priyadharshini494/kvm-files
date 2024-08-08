@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import os
 import contextlib
 import time
@@ -135,7 +157,7 @@ class _SpiPhy(BasePhy):  # pylint: disable=too-many-instance-attributes
         if self.__sw_cs_pin > 0:
             with contextlib.closing(gpiod.Chip(self.__gpio_device_path)) as chip:
                 line = chip.get_line(self.__sw_cs_pin)
-                line.request("rutomatrix::hid::sw_cs", gpiod.LINE_REQ_DIR_OUT, default_vals=[1])
+                line.request("kvmd::hid::sw_cs", gpiod.LINE_REQ_DIR_OUT, default_vals=[1])
                 yield line
         else:
             yield None

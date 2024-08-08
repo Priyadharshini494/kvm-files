@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import os
 import errno
 import argparse
@@ -40,12 +62,12 @@ def main(argv: (list[str] | None)=None) -> None:
         load_msd=True,
     )
     parser = argparse.ArgumentParser(
-        prog="rutomatrix-otgmsd",
-        description="Rutomatrix OTG-MSD low-level hand tool",
+        prog="kvmd-otgmsd",
+        description="KVMD OTG-MSD low-level hand tool",
         parents=[parent_parser],
     )
     parser.add_argument("-i", "--instance", default=0, type=valid_int_f0,
-                        metavar="<N>", help="Drive instance (0 for Rutomatrix drive)")
+                        metavar="<N>", help="Drive instance (0 for KVMD drive)")
     parser.add_argument("--set-cdrom", default=None, type=valid_bool,
                         metavar="<1|0|yes|no>", help="Set CD-ROM flag")
     parser.add_argument("--set-rw", default=None, type=valid_bool,
@@ -59,7 +81,7 @@ def main(argv: (list[str] | None)=None) -> None:
     options = parser.parse_args(argv[1:])
 
     if config.kvmd.msd.type != "otg":
-        raise SystemExit(f"Error: Rutomatrix MSD not using 'otg'"
+        raise SystemExit(f"Error: KVMD MSD not using 'otg'"
                          f" (now configured {config.kvmd.msd.type!r})")
 
     set_param = (lambda param, value: _set_param(config.otg.gadget, options.instance, param, value))

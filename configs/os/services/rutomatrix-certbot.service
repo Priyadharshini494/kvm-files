@@ -3,7 +3,7 @@ Description=Rutomatrix - Certbot-Renew for Rutomatrix-Nginx
 
 [Service]
 Type=oneshot
-EnvironmentFile=-/etc/conf.d/kvmd-certbot
-ExecStart=/usr/bin/kvmd-certbot renew --quiet
+EnvironmentFile=-/etc/conf.d/rutomatrix-certbot
+ExecStart=/usr/bin/rutomatrix-certbot renew --quiet
 # Should we?..
 # PrivateTmp=true

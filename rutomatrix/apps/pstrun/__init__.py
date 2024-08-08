@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import sys
 import os
 import signal
@@ -37,7 +59,7 @@ async def _run_process(cmd: list[str], data_path: str) -> asyncio.subprocess.Pro
         preexec_fn=_preexec,
         env={
             **os.environ,
-            "RUTOMATRIX_PST_DATA": data_path,
+            "KVMD_PST_DATA": data_path,
         },
     ))
 
@@ -98,7 +120,7 @@ async def _run_cmd_ws(cmd: list[str], ws: aiohttp.ClientWebSocketResponse) -> in
 async def _run_cmd(cmd: list[str], unix_path: str) -> None:
     get_logger(0).info("Opening PST session ...")
     async with aiohttp.ClientSession(
-        headers={"User-Agent": htclient.make_user_agent("RUTOMATRIX-PSTRun")},
+        headers={"User-Agent": htclient.make_user_agent("KVMD-PSTRun")},
         connector=aiohttp.UnixConnector(path=unix_path),
         timeout=aiohttp.ClientTimeout(total=5),
     ) as session:
@@ -114,8 +136,8 @@ def main(argv: (list[str] | None)=None) -> None:
         argv=argv,
     )
     parser = argparse.ArgumentParser(
-        prog="rutomatrix-pstrun",
-        description="Request the access to Rutomatrix persistent storage and run the script",
+        prog="kvmd-pstrun",
+        description="Request the access to KVMD persistent storage and run the script",
         parents=[parent_parser],
     )
     parser.add_argument("cmd", nargs="+", help="Script with arguments to run")

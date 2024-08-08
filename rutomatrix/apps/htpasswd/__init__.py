@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import sys
 import os
 import getpass
@@ -21,10 +43,10 @@ from .. import init
 
 # =====
 def _get_htpasswd_path(config: Section) -> str:
-    if config.rutomatrix.auth.internal.type != "htpasswd":
-        raise SystemExit(f"Error: Rutomatrix internal auth not using 'htpasswd'"
-                         f" (now configured {config.rutomatrix.auth.internal.type!r})")
-    return config.rutomatrix.auth.internal.file
+    if config.kvmd.auth.internal.type != "htpasswd":
+        raise SystemExit(f"Error: KVMD internal auth not using 'htpasswd'"
+                         f" (now configured {config.kvmd.auth.internal.type!r})")
+    return config.kvmd.auth.internal.file
 
 
 @contextlib.contextmanager
@@ -63,12 +85,12 @@ def _print_invalidate_tip(prepend_nl: bool) -> None:
         print(file=sys.stderr)
     print(textwrap.dedent(f"""
         {gray}# Note: Users logged in with this username will stay logged in.
-        # To invalidate their cookies you need to restart rutomatrix & rutomatrix-nginx:
-        #    {reset}{blue}systemctl restart rutomatrix rutomatrix-nginx{gray}
-        # Be careful, this will break your connection to the Rutomatrix
+        # To invalidate their cookies you need to restart kvmd & kvmd-nginx:
+        #    {reset}{blue}systemctl restart kvmd kvmd-nginx{gray}
+        # Be careful, this will break your connection to the PiKVM
         # and may affect the GPIO relays state. Also don't forget to edit
-        # the files {reset}{blue}/etc/rutomatrix/{{vncpasswd,ipmipasswd}}{gray} and restart
-        # the corresponding services {reset}{blue}rutomatrix-vnc{gray} & {reset}{blue}rutomatrix-ipmi{gray} if necessary.{reset}
+        # the files {reset}{blue}/etc/kvmd/{{vncpasswd,ipmipasswd}}{gray} and restart
+        # the corresponding services {reset}{blue}kvmd-vnc{gray} & {reset}{blue}kvmd-ipmi{gray} if necessary.{reset}
     """).strip(), file=sys.stderr)
 
 
@@ -109,8 +131,8 @@ def main(argv: (list[str] | None)=None) -> None:
         load_auth=True,
     )
     parser = argparse.ArgumentParser(
-        prog="Rutomatrix-htpasswd",
-        description="Manage Rutomatrix users (htpasswd auth only)",
+        prog="kvmd-htpasswd",
+        description="Manage KVMD users (htpasswd auth only)",
         parents=[parent_parser],
     )
     parser.set_defaults(cmd=(lambda *_: parser.print_help()))

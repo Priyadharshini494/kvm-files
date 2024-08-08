@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import os
 import re
 import shutil
@@ -72,8 +94,8 @@ def _check_config(config: Section) -> None:
     if (
         not config.otg.devices.serial.enabled
         and not config.otg.devices.ethernet.enabled
-        and config.rutomatrix.hid.type != "otg"
-        and config.rutomatrix.msd.type != "otg"
+        and config.kvmd.hid.type != "otg"
+        and config.kvmd.msd.type != "otg"
     ):
         raise RuntimeError("Nothing to do")
 
@@ -308,8 +330,8 @@ def main(argv: (list[str] | None)=None) -> None:
         load_msd=True,
     )
     parser = argparse.ArgumentParser(
-        prog="rutomatrix-otg",
-        description="Control Rutomatrix OTG device",
+        prog="kvmd-otg",
+        description="Control KVMD OTG device",
         parents=[parent_parser],
     )
     parser.set_defaults(cmd=(lambda *_: parser.print_help()))

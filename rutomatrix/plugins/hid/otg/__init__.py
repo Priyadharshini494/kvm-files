@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 from typing import Iterable
 from typing import AsyncGenerator
 from typing import Any
@@ -29,7 +51,7 @@ class Plugin(BaseHid):  # pylint: disable=too-many-instance-attributes
         mouse_alt: dict[str, Any],
         jiggler: dict[str, Any],
         noop: bool,
-        udc: str,  # XXX: Not from options, see /rutomatrix/apps/rutomatrix/__init__.py for details
+        udc: str,  # XXX: Not from options, see /kvmd/apps/kvmd/__init__.py for details
     ) -> None:
 
         super().__init__(**jiggler)
@@ -67,13 +89,13 @@ class Plugin(BaseHid):  # pylint: disable=too-many-instance-attributes
     def get_plugin_options(cls) -> dict:
         return {
             "keyboard": {
-                "device":         Option("/dev/rutomatrix-hid-keyboard", type=valid_abs_path, unpack_as="device_path"),
+                "device":         Option("/dev/kvmd-hid-keyboard", type=valid_abs_path, unpack_as="device_path"),
                 "select_timeout": Option(0.1, type=valid_float_f01),
                 "queue_timeout":  Option(0.1, type=valid_float_f01),
                 "write_retries":  Option(150, type=valid_int_f1),
             },
             "mouse": {
-                "device":             Option("/dev/rutomatrix-hid-mouse", type=valid_abs_path, unpack_as="device_path"),
+                "device":             Option("/dev/kvmd-hid-mouse", type=valid_abs_path, unpack_as="device_path"),
                 "select_timeout":     Option(0.1,   type=valid_float_f01),
                 "queue_timeout":      Option(0.1,   type=valid_float_f01),
                 "write_retries":      Option(150,   type=valid_int_f1),

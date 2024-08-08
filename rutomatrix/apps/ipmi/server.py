@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import os
 import select
 import asyncio
@@ -16,7 +38,7 @@ from pyghmi.ipmi.private.serversession import ServerSession as IpmiServerSession
 
 from ...logging import get_logger
 
-from ...clients.rutomatrix import RutomatrixClient
+from ...clients.kvmd import KvmdClient
 
 from ... import aiotools
 
@@ -31,7 +53,7 @@ class IpmiServer(BaseIpmiServer):  # pylint: disable=too-many-instance-attribute
     def __init__(
         self,
         auth_manager: IpmiAuthManager,
-        rutomatrix: RutomatrixClient,
+        kvmd: KvmdClient,
 
         host: str,
         port: int,
@@ -46,7 +68,7 @@ class IpmiServer(BaseIpmiServer):  # pylint: disable=too-many-instance-attribute
         super().__init__(authdata=auth_manager, address=host, port=port)
 
         self.__auth_manager = auth_manager
-        self.__rutomatrix = rutomatrix
+        self.__kvmd = kvmd
 
         self.__host = host
         self.__port = port
@@ -140,11 +162,11 @@ class IpmiServer(BaseIpmiServer):  # pylint: disable=too-many-instance-attribute
         async def runner():  # type: ignore
             logger = get_logger(0)
             credentials = self.__auth_manager.get_credentials(session.username.decode())
-            logger.info("[%s]: Performing request %s from user %r (IPMI) as %r (RUTOMATRIX)",
-                        session.sockaddr[0], name, credentials.ipmi_user, credentials.rutomatrix_user)
+            logger.info("[%s]: Performing request %s from user %r (IPMI) as %r (KVMD)",
+                        session.sockaddr[0], name, credentials.ipmi_user, credentials.kvmd_user)
             try:
-                async with self.__rutomatrix.make_session(credentials.rutomatrix_user, credentials.rutomatrix_passwd) as rutomatrix_session:
-                    func = functools.reduce(getattr, func_path.split("."), rutomatrix_session)
+                async with self.__kvmd.make_session(credentials.kvmd_user, credentials.kvmd_passwd) as kvmd_session:
+                    func = functools.reduce(getattr, func_path.split("."), kvmd_session)
                     return (await func(**kwargs))
             except (aiohttp.ClientError, asyncio.TimeoutError) as err:
                 logger.error("[%s]: Can't perform request %s: %s", session.sockaddr[0], name, err)

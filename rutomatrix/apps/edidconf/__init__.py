@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import sys
 import os
 import re
@@ -164,11 +186,11 @@ def main(argv: (list[str] | None)=None) -> None:  # pylint: disable=too-many-bra
     if argv is None:
         argv = sys.argv
     parser = argparse.ArgumentParser(
-        prog="Rutomatrix-edidconf",
-        description="A simple and primitive Rutomatrix EDID editor",
+        prog="kvmd-edidconf",
+        description="A simple and primitive KVMD EDID editor",
         # parents=[parent_parser],
     )
-    parser.add_argument("-f", "--edid", dest="edid_path", default="/etc/rutomatrix/tc358743-edid.hex",
+    parser.add_argument("-f", "--edid", dest="edid_path", default="/etc/kvmd/tc358743-edid.hex",
                         help="The hex/bin EDID file path", metavar="<file>")
     parser.add_argument("--export-hex",
                         help="Export [--edid] file to the new file as a hex text", metavar="<file>")
@@ -190,7 +212,7 @@ def main(argv: (list[str] | None)=None) -> None:  # pylint: disable=too-many-bra
                         help="Clear the EDID in the [--device]")
     parser.add_argument("--apply", action="store_true",
                         help="Apply [--edid] on the [--device]")
-    parser.add_argument("--device", dest="device_path", default="/dev/rutomatrix-video",
+    parser.add_argument("--device", dest="device_path", default="/dev/kvmd-video",
                         help="The video device", metavar="<device>")
     options = parser.parse_args(argv[1:])
 

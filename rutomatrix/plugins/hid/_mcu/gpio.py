@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import types
 import time
 
@@ -39,14 +61,14 @@ class Gpio:  # pylint: disable=too-many-instance-attributes
                 assert self.__power_detect_line is None
                 self.__power_detect_line = self.__chip.get_line(self.__power_detect_pin)
                 self.__power_detect_line.request(
-                    "rutomatrix::hid::power_detect", gpiod.LINE_REQ_DIR_IN,
+                    "kvmd::hid::power_detect", gpiod.LINE_REQ_DIR_IN,
                     flags=(gpiod.LINE_REQ_FLAG_BIAS_PULL_DOWN if self.__power_detect_pull_down else 0),
                 )
             if self.__reset_pin >= 0:
                 assert self.__reset_line is None
                 self.__reset_line = self.__chip.get_line(self.__reset_pin)
                 self.__reset_line.request(
-                    "rutomatrix::hid::reset", gpiod.LINE_REQ_DIR_OUT,
+                    "kvmd::hid::reset", gpiod.LINE_REQ_DIR_OUT,
                     default_vals=[int(self.__reset_inverted)],
                 )
 

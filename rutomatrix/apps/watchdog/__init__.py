@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 import argparse
 import errno
 import time
@@ -70,7 +92,7 @@ def _cmd_run(config: Section) -> None:
     except (SystemExit, KeyboardInterrupt):
         if not fail:
             _reset_alarm(config.rtc, config.timeout)
-            logger.info("The watchdog remains alarmed. Use 'rutomatrix-watchdog cancel' to disarm it")
+            logger.info("The watchdog remains alarmed. Use 'kvmd-watchdog cancel' to disarm it")
     logger.info("Bye-bye")
 
 
@@ -82,7 +104,7 @@ def _cmd_cancel(config: Section) -> None:
 def main(argv: (list[str] | None)=None) -> None:
     (parent_parser, argv, config) = init(add_help=False, argv=argv)
     parser = argparse.ArgumentParser(
-        prog="rutomatrix-watchdog",
+        prog="kvmd-watchdog",
         description="RTC-based hardware watchdog",
         parents=[parent_parser],
     )

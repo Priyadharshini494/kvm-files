@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 from typing import AsyncGenerator
 
 import gpiod
@@ -58,7 +80,7 @@ class Plugin(BaseAtx):  # pylint: disable=too-many-instance-attributes
 
         self.__reader = aiogp.AioReader(
             path=self.__device_path,
-            consumer="rutomatrixs::atx::leds",
+            consumer="kvmd::atx::leds",
             pins={
                 power_led_pin: aiogp.AioReaderPinParams(power_led_inverted, power_led_debounce),
                 hdd_led_pin: aiogp.AioReaderPinParams(hdd_led_inverted, hdd_led_debounce),
@@ -93,10 +115,10 @@ class Plugin(BaseAtx):  # pylint: disable=too-many-instance-attributes
         self.__chip = gpiod.Chip(self.__device_path)
 
         self.__power_switch_line = self.__chip.get_line(self.__power_switch_pin)
-        self.__power_switch_line.request("rutomatrix::atx::power_switch", gpiod.LINE_REQ_DIR_OUT, default_vals=[0])
+        self.__power_switch_line.request("kvmd::atx::power_switch", gpiod.LINE_REQ_DIR_OUT, default_vals=[0])
 
         self.__reset_switch_line = self.__chip.get_line(self.__reset_switch_pin)
-        self.__reset_switch_line.request("rutomatrix::atx::reset_switch", gpiod.LINE_REQ_DIR_OUT, default_vals=[0])
+        self.__reset_switch_line.request("kvmd::atx::reset_switch", gpiod.LINE_REQ_DIR_OUT, default_vals=[0])
 
     async def get_state(self) -> dict:
         return {

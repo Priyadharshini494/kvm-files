@@ -1,0 +1,13 @@
+pipeline {
+    agent {
+        label 'rpi'
+    }
+    stages {
+        stage('Run Command') {
+            steps {
+                // Execute a command on the Raspberry Pi agent
+                sh 'cd /usr/local/bin && sudo echo y | ./automate-script.bash '
+            }
+        }
+    }
+}

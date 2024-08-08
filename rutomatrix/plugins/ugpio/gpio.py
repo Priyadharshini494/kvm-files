@@ -1,3 +1,25 @@
+# ========================================================================== #
+#                                                                            #
+#    KVMD - The main PiKVM daemon.                                           #
+#                                                                            #
+#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
+#                                                                            #
+#    This program is free software: you can redistribute it and/or modify    #
+#    it under the terms of the GNU General Public License as published by    #
+#    the Free Software Foundation, either version 3 of the License, or       #
+#    (at your option) any later version.                                     #
+#                                                                            #
+#    This program is distributed in the hope that it will be useful,         #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+#    GNU General Public License for more details.                            #
+#                                                                            #
+#    You should have received a copy of the GNU General Public License       #
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
+#                                                                            #
+# ========================================================================== #
+
+
 from typing import Callable
 from typing import Any
 
@@ -56,7 +78,7 @@ class Plugin(BaseUserGpioDriver):
         assert self.__reader is None
         self.__reader = aiogp.AioReader(
             path=self.__device_path,
-            consumer="rutomatrix::gpio::inputs",
+            consumer="kvmd::gpio::inputs",
             pins=self.__input_pins,
             notifier=self._notifier,
         )
@@ -64,7 +86,7 @@ class Plugin(BaseUserGpioDriver):
         self.__chip = gpiod.Chip(self.__device_path)
         for (pin, initial) in self.__output_pins.items():
             line = self.__chip.get_line(pin)
-            line.request("rutomatrix::gpio::outputs", gpiod.LINE_REQ_DIR_OUT, default_vals=[int(initial or False)])
+            line.request("kvmd::gpio::outputs", gpiod.LINE_REQ_DIR_OUT, default_vals=[int(initial or False)])
             self.__output_lines[pin] = line
 
     async def run(self) -> None:
