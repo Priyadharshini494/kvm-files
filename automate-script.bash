@@ -674,7 +674,7 @@ fix-config() {
   mv config.txt config.$( date +%Y%m%d )
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -899,7 +899,7 @@ atx-startupfile(){
   cd /etc/systemd/system/
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -921,7 +921,7 @@ custom-startupfile() {
   cd /etc/systemd/system/
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -942,7 +942,7 @@ custom-startupfile() {
 upload-i2c-file-(){
   cd /home/rpi/Documents/
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -963,7 +963,7 @@ upload-i2c-file-(){
 upload-acm-ncm-file(){
   cd /home/rpi/Documents/
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1294,7 +1294,7 @@ fix-rutomatrix() {
   echo -n "Getting most current rutomatrix directory"
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1323,7 +1323,7 @@ fix-rutomatrix-site() {
   echo -n "Getting most current rutomatrix directory"
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1349,7 +1349,7 @@ fix-override-main(){
   mv main.yaml main.yaml.$( date +%Y%m%d )
   echo -n "Getting most current override and main file..."
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1377,7 +1377,7 @@ fix-nginx-ctxconf(){
   mv rutomatrix.ctx-http.conf rutomatrix.ctx-http.conf.$( date +%Y%m%d )
   echo -n "Getting most current override and main file..."
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1407,7 +1407,7 @@ fix-web() {
   echo -n "Getting most current web directory"
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1434,7 +1434,7 @@ fix-ui() {
   echo -n "Getting most current UI"
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1456,7 +1456,7 @@ fix-https() {
   mv listen-https.conf listen-https.conf.$( date +%Y%m%d )
   echo -n "Getting https file..."
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1506,7 +1506,7 @@ configure-minicom() {
   cd /home/rpi/
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1529,7 +1529,7 @@ create-rasp-conf(){
   cd /etc/modules-load.d/
   
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1552,7 +1552,7 @@ create-tessdata(){
   
   echo -n "Getting tessdata folder..."
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
@@ -1594,7 +1594,7 @@ upload-elf(){
   
   echo -n "Getting elf file..."
   temp_dir=$(mktemp -d)
-  git clone https://github.com/Priyadharshini494/kvm-files-bck.git "$temp_dir" > /dev/null 2>&1
+  git clone https://github.com/Priyadharshini494/kvm-files.git "$temp_dir" > /dev/null 2>&1
 
   # Check if the clone was successful
   if [ $? -ne 0 ]; then
