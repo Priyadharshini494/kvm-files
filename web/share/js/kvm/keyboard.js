@@ -1,25 +1,3 @@
-/*****************************************************************************
-#                                                                            #
-#    KVMD - The main PiKVM daemon.                                           #
-#                                                                            #
-#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
-#                                                                            #
-#    This program is free software: you can redistribute it and/or modify    #
-#    it under the terms of the GNU General Public License as published by    #
-#    the Free Software Foundation, either version 3 of the License, or       #
-#    (at your option) any later version.                                     #
-#                                                                            #
-#    This program is distributed in the hope that it will be useful,         #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
-#    GNU General Public License for more details.                            #
-#                                                                            #
-#    You should have received a copy of the GNU General Public License       #
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
-#                                                                            #
-*****************************************************************************/
-
-
 import {tools, $, $$$} from "../tools.js";
 import {Keypad} from "../keypad.js";
 
@@ -117,7 +95,7 @@ export function Keyboard(__recordWsEvent) {
 			}
 		} else {
 			if (is_captured) {
-				title = "Keyboard captured, PiKVM offline";
+				title = "Keyboard captured, Rutomatrix offline";
 			}
 		}
 		$("hid-keyboard-led").className = led;
@@ -244,7 +222,7 @@ export function Keyboard2(__recordWsEvent) {
 			}
 		} else {
 			if (is_captured) {
-				title = "Keyboard captured, PiKVM offline";
+				title = "Keyboard captured, Rutomatrix offline";
 			}
 		}
 		$("hid-keyboard-led2").className = led;
@@ -371,7 +349,7 @@ export function Keyboard3(__recordWsEvent) {
 			}
 		} else {
 			if (is_captured) {
-				title = "Keyboard captured, PiKVM offline";
+				title = "Keyboard captured, Rutomatrix offline";
 			}
 		}
 		$("hid-keyboard-led3").className = led;
@@ -498,7 +476,7 @@ export function Keyboard4(__recordWsEvent) {
 			}
 		} else {
 			if (is_captured) {
-				title = "Keyboard captured, PiKVM offline";
+				title = "Keyboard captured, Rutomatrix offline";
 			}
 		}
 		$("hid-keyboard-led4").className = led;

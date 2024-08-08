@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -eE
+set -x
+
+# https://forums.raspberrypi.com/viewtopic.php?p=2202017
+
+card="$1"
+conn_id="$2"
+
+test -n "$card"
+test -n "$conn_id"
+
+card_n="${card/card/}"
+test -n "$card_n"
+
+port=$(grep "^connector\[$conn_id\]:" "/sys/kernel/debug/dri/$card_n/state" | awk '{print $2}')
+test -n "$port"
+
+
+if [ "$port" = "HDMI-A-1" ]; then
+	status=$(head -n 1 "/sys/class/drm/$card-$port/status")
+	if [ "$status" = "connected" ]; then
+		if systemctl is-enabled -q rutomatrix-pass; then
+			systemctl restart rutomatrix-pass || true
+		fi
+		for pid in $(pgrep -f '^rutomatrix/streamer: ' || true); do
+			kill "$pid" || true
+		done
+	fi
+fi

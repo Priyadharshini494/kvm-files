@@ -1,25 +1,3 @@
-/*****************************************************************************
-#                                                                            #
-#    KVMD - The main PiKVM daemon.                                           #
-#                                                                            #
-#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
-#                                                                            #
-#    This program is free software: you can redistribute it and/or modify    #
-#    it under the terms of the GNU General Public License as published by    #
-#    the Free Software Foundation, either version 3 of the License, or       #
-#    (at your option) any later version.                                     #
-#                                                                            #
-#    This program is distributed in the hope that it will be useful,         #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
-#    GNU General Public License for more details.                            #
-#                                                                            #
-#    You should have received a copy of the GNU General Public License       #
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
-#                                                                            #
-*****************************************************************************/
-
-
 "use strict";
 
 
@@ -33,7 +11,7 @@ export function main() {
 
 	if (checkBrowser(null, null)) {
 		__setAppText();
-		__loadKvmdInfo();
+		__loadRutomatrixInfo();
 	}
 }
 
@@ -50,7 +28,7 @@ function __setAppText() {
 	`;
 }
 
-function __loadKvmdInfo() {
+function __loadRutomatrixInfo() {
 	let http = tools.makeRequest("GET", "/api/info?fields=auth,meta,extras", function() {
 		if (http.readyState === 4) {
 			if (http.status === 200) {
@@ -58,7 +36,7 @@ function __loadKvmdInfo() {
 
 				let apps = [];
 				if (info.extras === null) {
-					wm.error("Not all applications in the menu can be displayed<br>due an error. See KVMD logs for details.");
+					wm.error("Not all applications in the menu can be displayed<br>due an error. See Rutomatrix logs for details.");
 				} else {
 					apps = Object.values(info.extras).sort(function(a, b) {
 						if (a.place < b.place) {
@@ -94,16 +72,16 @@ function __loadKvmdInfo() {
 				}
 
 				if (info.meta !== null && info.meta.server && info.meta.server.host) {
-					$("kvmd-meta-server-host").innerHTML = info.meta.server.host;
+					$("rutomatrix-meta-server-host").innerHTML = info.meta.server.host;
 					document.title = `Rautomatrix Index: ${info.meta.server.host}`;
 				} else {
-					$("kvmd-meta-server-host").innerHTML = "";
+					$("rutomatrix-meta-server-host").innerHTML = "";
 					document.title = "Rautomatrix Index";
 				}
 			} else if (http.status === 401 || http.status === 403) {
 				document.location.href = "/login";
 			} else {
-				setTimeout(__loadKvmdInfo, 1000);
+				setTimeout(__loadRutomatrixInfo, 1000);
 			}
 		}
 	});

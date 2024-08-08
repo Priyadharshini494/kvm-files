@@ -1,0 +1,29 @@
+[Unit]
+Description=PiKVM - Boot configuration
+After=systemd-modules-load.service rutomatrix-oled.service
+Before=\
+	rutomatrix-webterm.service \
+	rutomatrix-certbot.service \
+	rutomatrix-ipmi.service \
+	rutomatrix-janus-static.service \
+	rutomatrix-janus.service \
+	rutomatrix-nginx.service \
+	rutomatrix-otg.service \
+	rutomatrix-otgnet.service \
+	rutomatrix-pst.service \
+	rutomatrix-tc358743.service \
+	rutomatrix-vnc.service \
+	rutomatrix-watchdog.service \
+	rutomatrix.service \
+	pikvm-bootconfig.service \
+	sshd.service \
+	network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rutomatrix-bootconfig --do-the-thing
+ExecStop=/bin/true
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

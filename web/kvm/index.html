@@ -1,27 +1,5 @@
 <!DOCTYPE html>
-<!--
-==============================================================================
-#                                                                            #
-#    KVMD - The main PiKVM daemon.                                           #
-#                                                                            #
-#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
-#                                                                            #
-#    This program is free software: you can redistribute it and/or modify    #
-#    it under the terms of the GNU General Public License as published by    #
-#    the Free Software Foundation, either version 3 of the License, or       #
-#    (at your option) any later version.                                     #
-#                                                                            #
-#    This program is distributed in the hope that it will be useful,         #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
-#    GNU General Public License for more details.                            #
-#                                                                            #
-#    You should have received a copy of the GNU General Public License       #
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
-#                                                                            #
-==============================================================================
 
--->
 <html lang="en">
 
 <head>
@@ -1371,7 +1349,7 @@
                       <td style="line-height:1.5"><b>Current image is out of storage</b></td>
                     </tr>
                     <tr>
-                      <td><sup style="line-height:1">This image was connected manually using <b>kvmd-otgmsd</b></sup></td>
+                      <td><sup style="line-height:1">This image was connected manually using <b>rutomatrix-otgmsd</b></sup></td>
                     </tr>
                   </table>
                 </div>
@@ -1385,7 +1363,7 @@
                       <td style="line-height:1.5"><b>Read-write mode is enabled</b></td>
                     </tr>
                     <tr>
-                      <td><sup style="line-height:1">Do not turn off PiKVM while this is active to prevent<br>
+                      <td><sup style="line-height:1">Do not turn off Rutomatrix while this is active to prevent<br>
                           filesystem corruption. Use read-only mode where possible,<br>
                           as writing to SD card often can reduce its lifespan.</sup></td>
                     </tr>
@@ -1398,7 +1376,7 @@
                   <table>
                     <tr>
                       <td rowspan="2"><img class="sign " src="/share/svg/info.svg"></td>
-                      <td style="line-height:1.5"><b>The image is being downloaded from PiKVM</b></td>
+                      <td style="line-height:1.5"><b>The image is being downloaded from Rutomatrix</b></td>
                     </tr>
                     <tr>
                       <td><sup style="line-height:1">Please wait</sup></td>
@@ -1521,7 +1499,7 @@
       </li-->
     <!--li class="right" id="macro-dropdown"><a class="menu-button" href="#"><img class="led-gray" id="hid-recorder-led" src="/share/svg/led-gear.svg"><span>Macro</span></a>
         <div class="menu">
-          <div class="text"><b>Record and play HID/ATX/GPIO actions<br></b><sub>For security reasons, the record will not be saved on the PiKVM</sub></div>
+          <div class="text"><b>Record and play HID/ATX/GPIO actions<br></b><sub>For security reasons, the record will not be saved on the Rutomatrix</sub></div>
           <hr>
           <div class="buttons buttons-row">
             <button class="row25" disabled data-force-hide-menu id="hid-recorder-record">&bull; Rec</button>
@@ -1563,7 +1541,7 @@
       </li-->
     <!--li class="right" id="text-dropdown"><a class="menu-button" href="#"><img class="feature-disabled" id="stream-ocr-led" src="/share/svg/led-gear.svg"><span>Text</span></a>
         <div class="menu" id="text-menu">
-          <div class="text"><b>Paste text as keypress sequence<br></b><sub>Please note that PiKVM cannot switch the keyboard layout</sub></div>
+          <div class="text"><b>Paste text as keypress sequence<br></b><sub>Please note that Rutomatrix cannot switch the keyboard layout</sub></div>
           <hr>
           <div class="text" style="margin-right: 20px">
             <textarea id="hid-pak-text" data-focus placeholder="Enter your text here"></textarea>
@@ -1867,7 +1845,7 @@
                     <td style="line-height:1.5"><b>Current image is out of storage</b></td>
                   </tr>
                   <tr>
-                    <td><sup style="line-height:1">This image was connected manually using <b>kvmd-otgmsd</b></sup></td>
+                    <td><sup style="line-height:1">This image was connected manually using <b>rutomatrix-otgmsd</b></sup></td>
                   </tr>
                 </table>
               </div>
@@ -2539,7 +2517,7 @@
                     <td style="line-height:1.5"><b>Current image is out of storage</b></td>
                   </tr>
                   <tr>
-                    <td><sup style="line-height:1">This image was connected manually using <b>kvmd-otgmsd</b></sup></td>
+                    <td><sup style="line-height:1">This image was connected manually using <b>rutomatrix-otgmsd</b></sup></td>
                   </tr>
                 </table>
               </div>
@@ -3210,7 +3188,7 @@
                     <td style="line-height:1.5"><b>Current image is out of storage</b></td>
                   </tr>
                   <tr>
-                    <td><sup style="line-height:1">This image was connected manually using <b>kvmd-otgmsd</b></sup></td>
+                    <td><sup style="line-height:1">This image was connected manually using <b>rutomatrix-otgmsd</b></sup></td>
                   </tr>
                 </table>
               </div>
@@ -5533,10 +5511,10 @@
     <iframe id="webterm-iframe" src="" style="width: 100%; height: 100%"></iframe>
   </div>
   <ul class="footer">
-    <li class="footer-left"><span id="kvmd-meta-server-host" title="Server name (see System/About)"></span>&nbsp; |
-      &nbsp;<span id="kvmd-version-kvmd" title="KVMD version"></span>&nbsp; | &nbsp;<span id="kvmd-version-streamer"
+    <li class="footer-left"><span id="rutomatrix-meta-server-host" title="Server name (see System/About)"></span>&nbsp; |
+      &nbsp;<span id="rutomatrix-version-rutomatrix" title="Rutomatrix version"></span>&nbsp; | &nbsp;<span id="rutomatrix-version-streamer"
         title="Streamer version"></span></li>
-    <li class="footer-right"><a target="_blank" href="https://pikvm.org">Rautomatrix Project</a>&nbsp; | &nbsp;<a
+    <li class="footer-right"><a target="_blank" href="https://pikvm.org">Rutomatrix Project</a>&nbsp; | &nbsp;<a
         target="_blank" href="https://docs.pikvm.org">Documentation</a>&nbsp; | &nbsp;<a target="_blank"
         href="https://pikvm.org/support">Support</a></li>
   </ul>

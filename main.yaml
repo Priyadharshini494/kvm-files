@@ -6,7 +6,7 @@ override: !include [override.d, override.yaml]
 
 logging: !include logging.yaml
 
-kvmd:
+rutomatrix:
     auth: !include auth.yaml
 
     hid:

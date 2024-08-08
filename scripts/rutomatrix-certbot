@@ -1,0 +1,136 @@
+#!/bin/bash
+
+set -e
+export LC_ALL=C
+
+if [ "$(whoami)" != root ]; then
+	echo "Only root can do that"
+	exit 1
+fi
+
+user=rutomatrix-certbot
+web=/run/rutomatrix-certbot/webroot
+cur=/var/lib/rutomatrix/pst/data/certbot/runroot
+new=/var/lib/rutomatrix/pst/data/certbot/runroot.new
+tmp=/tmp/rutomatrix-certbot/runroot
+
+cur_opts=("--config-dir=$cur/config" "--work-dir=$cur/work" "--logs-dir=$cur/logs")
+
+
+function cleanup() {
+	rm -rf "$tmp"
+}
+
+function create_tmp() {
+	mkdir "$tmp" # Acts as a lock
+	chown "$user:" "$tmp"
+	trap cleanup EXIT
+}
+
+function ensure_runroot() {
+	rutomatrix-pstrun -- bash -c "
+		set -ex
+		mkdir -p '$cur'
+		chown -R '$user:' '$cur/..'
+	"
+}
+
+function restart_if_running() {
+	if systemctl is-active --quiet "$2"; then
+		echo "=> systemctl $1 $2"
+		systemctl "$1" "$2" || true
+	fi
+}
+
+function restart_if_running_nginx() {
+	restart_if_running reload rutomatrix-nginx
+}
+
+function restart_if_running_cloud() {
+	restart_if_running reload rutomatrix-nginx
+}
+
+function restart_if_running_vnc() {
+	restart_if_running restart rutomatrix-vnc
+}
+
+case "$1" in
+	-h|--help|help)
+		create_tmp
+		sudo --preserve-env -u "$user" certbot "$@" "${cur_opts[@]}"
+	;;
+
+	--)
+		shift
+		create_tmp
+		ensure_runroot
+		sudo --preserve-env -u "$user" rutomatrix-pstrun -- certbot "$@" "${cur_opts[@]}"
+	;;
+
+	certonly|certonly_webroot)
+		webroot_opts=()
+		if [ "$1" == certonly_webroot ]; then
+			webroot_opts=(--webroot "--webroot-path=$web")
+		fi
+		shift
+		create_tmp
+		ensure_runroot
+		sudo --preserve-env -u "$user" rutomatrix-pstrun -- certbot certonly "$@" "${cur_opts[@]}" \
+			"${webroot_opts[@]}" \
+			--deploy-hook="/usr/bin/bash -c '
+				set -ex
+				chmod 755 '$cur/config/'{archive,live}
+				chmod 640 \"\$RENEWED_LINEAGE/privkey.pem\"
+			'"
+	;;
+
+	renew)
+		shift
+		create_tmp
+		cp -a "$cur"/. "$tmp"
+		chown -R "$user:" "$tmp"
+		sed -s -i -e "s| = $cur/| = $tmp/|g" "$tmp/config/renewal/"*
+		sudo --preserve-env -u "$user" certbot renew "$@" \
+			--config-dir="$tmp/config" \
+			--work-dir="$tmp/work" \
+			--logs-dir="$tmp/logs" \
+			--deploy-hook="/usr/bin/touch '$tmp/updated'" || true
+		if [ -f "$tmp/updated" ]; then
+			sudo --preserve-env -u "$user" rutomatrix-pstrun -- bash -c "
+				set -ex
+				rm -rf '$new'
+				cp -a '$tmp'/. '$new'
+				rm '$new/updated'
+				chmod 755 '$new/config/'{archive,live}
+				chmod 640 '$new'/config/archive/*/privkey*.pem
+				sed -s -i -e 's| = $tmp/| = $cur/|g' '$new/config/renewal/'*
+				rm -rf '$new/logs/'*.log.* '$new/config/'{csr,keys}
+				sync
+				rutomatrix-helper-swapfiles '$new' '$cur'
+				rm -rf '$new'
+			"
+			restart_if_running_nginx
+			restart_if_running_vnc
+		fi
+	;;
+
+	install_nginx|install_vnc|install_cloud)
+		target="${1/install_/}"
+		if [ -z "$2" ]; then
+			echo "Usage: rutomatrix-certbot $1 <domain>"
+			exit 1
+		fi
+		set -x
+		rm -f "/etc/rutomatrix/$target/ssl/server."{crt,key}
+		ln -s "$cur/config/live/$2/fullchain.pem" "/etc/rutomatrix/$target/ssl/server.crt"
+		ln -s "$cur/config/live/$2/privkey.pem" "/etc/rutomatrix/$target/ssl/server.key"
+		"restart_if_running_$target"
+	;;
+
+	*)
+		echo "This command is not implemented by rutomatrix-certbot."
+		echo "To pass it into certbot under PST context use '--'."
+		echo "For example: rutomatrix-certbot -- $*"
+		exit 1
+	;;
+esac

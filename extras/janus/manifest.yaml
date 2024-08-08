@@ -1,0 +1,5 @@
+name: Janus
+description: Janus WebRTC Gateway
+path: janus
+daemon: rutomatrix-janus
+place: -1

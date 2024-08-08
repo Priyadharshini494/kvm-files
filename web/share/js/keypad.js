@@ -1,25 +1,3 @@
-/*****************************************************************************
-#                                                                            #
-#    KVMD - The main PiKVM daemon.                                           #
-#                                                                            #
-#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
-#                                                                            #
-#    This program is free software: you can redistribute it and/or modify    #
-#    it under the terms of the GNU General Public License as published by    #
-#    the Free Software Foundation, either version 3 of the License, or       #
-#    (at your option) any later version.                                     #
-#                                                                            #
-#    This program is distributed in the hope that it will be useful,         #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
-#    GNU General Public License for more details.                            #
-#                                                                            #
-#    You should have received a copy of the GNU General Public License       #
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
-#                                                                            #
-*****************************************************************************/
-
-
 "use strict";
 
 
@@ -101,7 +79,7 @@ export function Keypad(__keys_parent, __sendKey, __apply_fixes) {
 
 		let code = event.code;
 		if (__apply_fixes) {
-			// https://github.com/pikvm/pikvm/issues/819
+			// 
 			if (code == "IntlBackslash" && ["`", "~"].includes(event.key)) {
 				code = "Backquote";
 			} else if (code == "Backquote" && ["§", "±"].includes(event.key)) {
@@ -138,7 +116,7 @@ export function Keypad(__keys_parent, __sendKey, __apply_fixes) {
 	};
 
 	var __fixWinAltgr = function(code, state) {
-		// https://github.com/pikvm/pikvm/issues/375
+		// 
 		// https://github.com/novnc/noVNC/blob/84f102d6/core/input/keyboard.js
 		if (state) {
 			if (__altgr_ctrl_timer) {

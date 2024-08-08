@@ -1,0 +1,16 @@
+[Unit]
+Description=PiKVM - The Rutomatrix persistent storage manager
+Before=rutomatrix.service
+
+[Service]
+User=rutomatrix-pst
+Group=rutomatrix-pst
+Type=simple
+Restart=always
+RestartSec=3
+
+ExecStart=/usr/bin/rutomatrix-pst --run
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

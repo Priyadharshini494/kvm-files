@@ -1,0 +1,14 @@
+[Unit]
+Description=Rutomatrix - OTG network service
+After=rutomatrix-otg.service
+Wants=network-pre.target
+After=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rutomatrix-otgnet start
+ExecStop=/usr/bin/rutomatrix-otgnet stop
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+rutomatrix ALL=(ALL) NOPASSWD: /usr/bin/rutomatrix-helper-otgmsd-remount
+rutomatrix-pst ALL=(ALL) NOPASSWD: /usr/bin/rutomatrix-helper-pst-remount

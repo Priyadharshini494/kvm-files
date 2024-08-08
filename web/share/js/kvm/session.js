@@ -1,25 +1,3 @@
-/*****************************************************************************
-#                                                                            #
-#    KVMD - The main PiKVM daemon.                                           #
-#                                                                            #
-#    Copyright (C) 2018-2023  Maxim Devaev <mdevaev@gmail.com>               #
-#                                                                            #
-#    This program is free software: you can redistribute it and/or modify    #
-#    it under the terms of the GNU General Public License as published by    #
-#    the Free Software Foundation, either version 3 of the License, or       #
-#    (at your option) any later version.                                     #
-#                                                                            #
-#    This program is distributed in the hope that it will be useful,         #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
-#    GNU General Public License for more details.                            #
-#                                                                            #
-#    You should have received a copy of the GNU General Public License       #
-#    along with this program.  If not, see <https://www.gnu.org/licenses/>.  #
-#                                                                            #
-*****************************************************************************/
-
-
 "use strict";
 
 
@@ -92,16 +70,16 @@ export function Session() {
 				<span class="code-comment">// The Rautomatrix metadata.<br>
 				// You can get this JSON using handle <a target="_blank" href="/api/info?fields=meta">/api/info?fields=meta</a>.<br>
 				// In the standard configuration this data<br>
-				// is specified in the file /etc/kvmd/meta.yaml.</span><br>
+				// is specified in the file /etc/rutomatrix/meta.yaml.</span><br>
 				<br>
 				${text}
 			`;
 			if (state.server && state.server.host) {
-				$("kvmd-meta-server-host").innerHTML = `Server: ${state.server.host}`;
+				$("rutomatrix-meta-server-host").innerHTML = `Server: ${state.server.host}`;
 				document.title = `Rautomatrix Session: ${state.server.host}`;
 			} else {
-				$("kvmd-meta-server-host").innerHTML = "";
-				document.title = "Rautomatrix Session";
+				$("rutomatrix-meta-server-host").innerHTML = "";
+				document.title = "Rutomatrix Session";
 			}
 
 			// Don't use this option, it may be removed in any time
@@ -231,7 +209,7 @@ export function Session() {
 
 	var __setAboutInfoSystem = function(state) {
 		$("about-version").innerHTML = `
-			Rautomatrix: <span class="code-comment">${state.kvmd.version}</span><br>
+			Rutomatrix: <span class="code-comment">${state.rutomatrix.version}</span><br>
 			<hr>
 			Streamer: <span class="code-comment">${state.streamer.version} (${state.streamer.app})</span>
 			${__formatStreamerFeatures(state.streamer.features)}
@@ -239,8 +217,8 @@ export function Session() {
 			${state.kernel.system} kernel:
 			${__formatUname(state.kernel)}
 		`;
-		$("kvmd-version-kvmd").innerHTML = state.kvmd.version;
-		$("kvmd-version-streamer").innerHTML = state.streamer.version;
+		$("rutomatrix-version-rutomatrix").innerHTML = state.rutomatrix.version;
+		$("rutomatrix-version-streamer").innerHTML = state.streamer.version;
 	};
 
 	var __formatStreamerFeatures = function(features) {

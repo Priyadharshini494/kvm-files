@@ -1,0 +1,3 @@
+ETC_PREFIX = ""
+SYSFS_PREFIX = ""
+PROCFS_PREFIX = ""

@@ -1,0 +1,13 @@
+[Unit]
+Description=Rutomatrix - OTG setup
+After=systemd-modules-load.service
+Before=rutomatrix.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rutomatrix-otg start
+ExecStop=/usr/bin/rutomatrix-otg stop
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

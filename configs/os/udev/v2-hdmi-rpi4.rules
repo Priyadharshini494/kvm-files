@@ -1,0 +1,6 @@
+# https://unix.stackexchange.com/questions/66901/how-to-bind-usb-device-under-a-static-name
+# https://wiki.archlinux.org/index.php/Udev#Setting_static_device_names
+KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", KERNELS=="fe801000.csi|fe801000.csi1", ATTR{name}=="unicam-image", GROUP="rutomatrix", SYMLINK+="rutomatrix-video", TAG+="systemd"
+KERNEL=="hidg0", GROUP="rutomatrix", SYMLINK+="rutomatrix-hid-keyboard"
+KERNEL=="hidg1", GROUP="rutomatrix", SYMLINK+="rutomatrix-hid-mouse"
+KERNEL=="hidg2", GROUP="rutomatrix", SYMLINK+="rutomatrix-hid-mouse-alt"

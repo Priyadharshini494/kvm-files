@@ -1,0 +1,16 @@
+[Unit]
+Description=Rutomatrix - VNC to Rutomatrix/Streamer proxy
+After=rutomatrix.service
+
+[Service]
+User=rutomatrix-vnc
+Group=rutomatrix-vnc
+Type=simple
+Restart=always
+RestartSec=3
+
+ExecStart=/usr/bin/rutomatrix-vnc --run
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target

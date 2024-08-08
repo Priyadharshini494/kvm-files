@@ -10,10 +10,7 @@
 
     To prevent kernel messages from printing to the terminal use "dmesg -n 1".
 
-    To change KVM password use command "kvmd-htpasswd set admin".
-
-    Useful links:
-      * https://pikvm.org
+    To change KVM password use command "rutomatrix-htpasswd set admin".
 
 
 The programs included with the Debian GNU/Linux system are free software;
